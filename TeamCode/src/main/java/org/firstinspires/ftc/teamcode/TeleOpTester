@@ -1,0 +1,73 @@
+package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+
+@TeleOp
+public class TeleOpTester extends LinearOpMode {
+    
+    Blinker Control_Hub;
+    DcMotorEx motor1;
+    ServoImplEx servo1;
+    boolean motorGoing = false;
+    boolean servoLeft = false;
+    
+    
+    boolean a1, b1, x1;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        Blinker Control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
+        motor1 = hardwareMap.get(DcMotorEx.class, "motorTest");
+        servo1 = hardwareMap.get(ServoImplEx.class, "servoTest");
+        motor1.setDirection(DcMotorEx.Direction.REVERSE);
+        servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        sleep(50L);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        waitForStart();
+
+        while (opModeIsActive()) {
+
+            a1 = this.gamepad1.a;//right bumper: for the claw servo
+            if (a1) {
+               if (motorGoing){
+                   motor1.setPower(0.0);
+                   motorGoing = false;
+               }
+               else{
+                   motor1.setPower(0.5);
+                   motorGoing = true;
+               }
+            }
+            b1 = this.gamepad1.b; // Check the button state
+            if (b1) {
+                if (motorGoing){
+                    motor1.setPower(0.0);
+                    motorGoing = false;
+                }
+                else{
+                    motor1.setPower(-0.5);
+                    motorGoing = true;
+                }
+            }
+            x1 = this.gamepad1.x;
+            if(x1){
+                if (servoLeft){
+                    servo1.setPosition(0.5);
+                    servoLeft = false;
+                }
+                else{
+                    servo1.setPosition(0.0);
+                    servoLeft = true;
+                }
+            }
+            telemetry.update();
+        }
+    }
+}
